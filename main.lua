@@ -185,6 +185,8 @@ local misprint_pronouns = {
 function Game:start_up()
 	Game_start_up(self)
 	G.P_CENTERS["j_joker"].config.pronouns = "any/all"
+	G.P_CENTERS["j_brainstorm"].config.pronouns = "she/her"
+	G.P_CENTERS["j_hanging_chad"].config.pronouns = "she/her"
 	G.P_CENTERS["j_misprint"].config.pronouns = {
 		ref_table = setmetatable({}, {__index = function()
 			return misprint_pronouns[math.random(#misprint_pronouns)]

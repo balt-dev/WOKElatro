@@ -9,12 +9,6 @@ position = "append"
 sources = ["main.lua"]
 
 [[patches]]
-[patches.module]
-source = "nativefs.lua"
-before = "main.lua"
-name = "nativefs" 
-
-[[patches]]
 [patches.pattern]
 target = "functions/UI_definitions.lua"
 position = "after"
