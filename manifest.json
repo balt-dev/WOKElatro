@@ -1,0 +1,13 @@
+{
+	"id": "jokerpronouns",
+	"name": "WOKElatro",
+	"author": ["baltdev"],
+	"description": "Mod to add randomized pronouns to Jokers. Based on a shitpost from the Geometry Dash reddit.",
+	"prefix": "jkpn",
+	"main_file": "smods.lua",
+	"badge_colour": "ff80a0",
+	"badge_text_colour": "ffffff",
+	"version": "1.0.0",
+	"priority": 0,
+	"dependencies": [],
+}

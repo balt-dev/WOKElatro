@@ -1,0 +1,32 @@
+[manifest]
+version = "1.0.0"
+priority = -2147483648
+
+[[patches]]
+[patches.copy]
+target = "main.lua"
+position = "append"
+sources = ["main.lua"]
+
+[[patches]]
+[patches.module]
+source = "nativefs.lua"
+before = "main.lua"
+name = "nativefs" 
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+position = "after"
+pattern = "local badges = {}"
+payload = '''
+local pronouns = JOKERPRONOUNS.get_pronouns(card)
+if pronouns then
+	badges[#badges + 1] = create_badge(
+		(pronouns.ref_table and pronouns.ref_table[pronouns.ref_value]) or pronouns.text,
+		pronouns.color, pronouns.text_color or G.C.WHITE, 1
+	)
+end
+'''
+times = 1
+match_indent = true
