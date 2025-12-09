@@ -76,7 +76,7 @@ local D = 0xc5259381
 local P = 0xa0d94a33
 
 local function h(x)
-	return bit.lshift(bit.lshift(x, 16), bit.lshift(x, 28))
+	return bit.lshift(bit.tobit(x / 2^16), bit.tobit(x / 2^28))
 end
 local function j(x)
 	return bit.tobit(P * x)
@@ -87,7 +87,7 @@ end
 
 local hash_cache = {}
 
-function hash(str)
+function seahash(str)
 	if hash_cache[str] then return hash_cache[str] end
 	while ((#str) % 4) ~= 0 do
 		str = str .. "\0"
@@ -100,9 +100,9 @@ function hash(str)
 		if i + 3 > #str then break end
 		bytebuf = bit.bor(
 			str:byte(i),
-			bit.lshift(str:byte(i+1), 8),
-			bit.lshift(str:byte(i+2), 16),
-			bit.lshift(str:byte(i+3), 24)
+			str:byte(i+1) * 2^8,
+			str:byte(i+2) * 2^16,
+			str:byte(i+3) * 2^24
 		)
 		a, b, c, d = b, c, d, g(bit.bxor(a, bytebuf))
 		i = i + 4
@@ -149,7 +149,7 @@ function JOKERPRONOUNS.get_pronouns(card)
 		if key == "c_base" then return end
 		if key:find("^m_") then return end
 		if key:find("^e_") then return end
-		local key_hash = hash(key)
+		local key_hash = seahash(key)
 		local rand = (tonumber(key_hash) / 2^32) + 0.5
 		return pick_random(rand)
 	end
