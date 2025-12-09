@@ -125,7 +125,7 @@ local function pick_random(random_value)
 		sum = sum + v.weight
 		if sum > random_value then return v end
 	end
-	return normalized_pronoun_table[i]
+	return normalized_pronoun_table[#normalized_pronoun_table]
 end
 
 function JOKERPRONOUNS.get_pronouns(card)
