@@ -66,7 +66,8 @@ for i, value in ipairs(JOKERPRONOUNS.weighted_pronoun_table) do
 	end
 end
 
--- LuaJIT simple implementation of SeaHash, altered for 32-bit numbers. Might be not as good.
+-- LuaJIT simple implementation of SeaHash, altered for 32-bit numbers.
+-- Might be not as good. Used to be better but LuaJIT hates ULLs on other platforms.
 
 local A = 0x9b0d677c
 local B = 0xd8e6c86c
@@ -125,7 +126,7 @@ local function pick_random(random_value)
 end
 
 function JOKERPRONOUNS.get_pronouns(card)
-	local pronouns = {text = "???_???", weight = 0, color = G.C.BLACK}
+	local pronouns = "pn_they_them"
 	if card.ability and card.ability.pronouns then
 		-- Cross-mod entrypoint 2/2
 		-- See above
