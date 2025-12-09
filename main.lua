@@ -11,30 +11,30 @@ local function blend(a, b, weight)
 end
 
 JOKERPRONOUNS.weighted_pronoun_table = {
-	{text = "he/him", weight = 150, color = G.C.BLUE},
-	{text = "she/her", weight = 150, color = blend(G.C.RED, G.C.WHITE)},
-	{text = "they/them", weight = 30, color = G.C.PURPLE},
-	{text = "he/they", weight = 50, color = blend(G.C.BLUE, G.C.GREY)},
-	{text = "she/they", weight = 50, color = blend(G.C.RED, G.C.GREY)},
-	{text = "he/she", weight = 10, color = blend(G.C.BLUE, G.C.RED)},
-	{text = "she/he", weight = 10, color = blend(G.C.BLUE, G.C.RED)},
-	{text = "he/she/they", weight = 15, color = blend(G.C.PURPLE, G.C.GREY)},
-	{text = "any/all", weight = 7, color = G.C.UI.TEXT_INACTIVE},
-	{text = "it/its", weight = 7, color = G.C.IMPORTANT},
-	{text = "xe/xem", weight = 5, color = G.C.PALE_GREEN},
-	{text = "xe/they", weight = 3, color = blend(G.C.PALE_GREEN, G.C.GREY)},
-	{text = "he/it", weight = 5, color = blend(G.C.BLUE, G.C.BLACK)},
-	{text = "she/it", weight = 5, color = blend(G.C.RED, G.C.BLACK)},
-	{text = "they/it", weight = 7, color = blend(G.C.PURPLE, G.C.BLACK)},
-	{text = "no pronouns", weight = 7, color = G.C.BLACK},
-	{text = "he/xem", weight = 3, color = blend(G.C.BLUE, G.C.PALE_GREEN)},
-	{text = "they/any", weight = 10, color = blend(G.C.PURPLE, G.C.WHITE)},
+	{key = "pn_he_him",      weight = 150, color = G.C.BLUE},
+	{key = "pn_she_her",     weight = 150, color = blend(G.C.RED, G.C.WHITE)},
+	{key = "pn_they_them",   weight = 30, color = G.C.PURPLE},
+	{key = "pn_he_they",     weight = 50, color = blend(G.C.BLUE, G.C.GREY)},
+	{key = "pn_she_they",    weight = 50, color = blend(G.C.RED, G.C.GREY)},
+	{key = "pn_he_she",      weight = 10, color = blend(G.C.BLUE, G.C.RED)},
+	{key = "pn_she_he",      weight = 10, color = blend(G.C.BLUE, G.C.RED)},
+	{key = "pn_he_she_they", weight = 15, color = blend(G.C.PURPLE, G.C.GREY)},
+	{key = "pn_any_all",     weight = 7, color = G.C.UI.TEXT_INACTIVE},
+	{key = "pn_it_its",      weight = 7, color = G.C.IMPORTANT},
+	{key = "pn_xe_xem",      weight = 5, color = G.C.PALE_GREEN},
+	{key = "pn_xe_they",     weight = 3, color = blend(G.C.PALE_GREEN, G.C.GREY)},
+	{key = "pn_he_it",       weight = 5, color = blend(G.C.BLUE, G.C.BLACK)},
+	{key = "pn_she_it",      weight = 5, color = blend(G.C.RED, G.C.BLACK)},
+	{key = "pn_they_it",     weight = 7, color = blend(G.C.PURPLE, G.C.BLACK)},
+	{key = "pn_no_pronouns", weight = 7, color = G.C.BLACK},
+	{key = "pn_he_xem",      weight = 3, color = blend(G.C.BLUE, G.C.PALE_GREEN)},
+	{key = "pn_they_any",    weight = 10, color = blend(G.C.PURPLE, G.C.WHITE)},
 }
 
 function JOKERPRONOUNS.inject_custom_pronouns()
 	-- Cross-mod entrypoint 1/2
 	-- Pronouns are of one of these two structures:
-	-- {text = string, weight = number, color = Color, text_color = Color?}
+	-- {key = string, weight = number, color = Color, text_color = Color?}
 	-- {ref_table = table, ref_value = any, weight = number, color = Color, text_color = Color?}
 	
 	-- table.insert(JOKERPRONOUNS.weighted_pronoun_table, 
@@ -50,10 +50,10 @@ for _, p in ipairs(JOKERPRONOUNS.weighted_pronoun_table) do
 end
 
 local normalized_pronoun_table = {}
-local pronouns_by_text = {}
+local pronouns_by_key = {}
 for i, value in ipairs(JOKERPRONOUNS.weighted_pronoun_table) do
 	local tbl = {
-		text = value.text,
+		key = value.key,
 		ref_table = value.ref_table,
 		ref_value = value.ref_value,
 		weight = value.weight / weight_sum,
@@ -61,8 +61,8 @@ for i, value in ipairs(JOKERPRONOUNS.weighted_pronoun_table) do
 		text_color = value.text_color
 	}
 	normalized_pronoun_table[i] = tbl
-	if tbl.text then
-		pronouns_by_text[value.text] = tbl
+	if tbl.key then
+		pronouns_by_key[value.key] = tbl
 	end
 end
 
@@ -129,15 +129,15 @@ local function pick_random(random_value)
 end
 
 function JOKERPRONOUNS.get_pronouns(card)
-	local pronouns = {text = "???/???", weight = 0, color = G.C.BLACK}
+	local pronouns = {text = "???_???", weight = 0, color = G.C.BLACK}
 	if card.ability and card.ability.pronouns then
 		-- Cross-mod entrypoint 2/2
 		-- See above
 		if type(card.ability.pronouns) == "string" then
-			if pronouns_by_text[card.ability.pronouns] then
-				return pronouns_by_text[card.ability.pronouns]
+			if pronouns_by_key[card.ability.pronouns] then
+				return pronouns_by_key[card.ability.pronouns]
 			else
-				return {text = card.ability.pronouns, weight = 0, color = G.C.BLACK}
+				return {key = card.ability.pronouns, weight = 0, color = G.C.BLACK}
 			end
 		else
 			return card.ability.pronouns
@@ -160,58 +160,49 @@ end
 
 local Game_start_up = Game.start_up
 
-local misprint_pronouns = {
-	"eh/ihm",
-	"eh/ihm",
-	"eh/ihm",
-	"eh/ihm",
-	"eh/ihm",
-	"hse/ehr",
-	"hse/ehr",
-	"hse/ehr",
-	"hse/ehr",
-	"hse/ehr",
-	"htye/emht",
-	"htye/emht",
-	"tis/it",
-	"tis/it",
-	"ex/mxe",
-	"nay/lal",
-	"oeno",
-	"ouospr nnno"
-}
-
-function Game:start_up()
+function Game:start_up()	
 	Game_start_up(self)
-	G.P_CENTERS["j_joker"].config.pronouns = "any/all"
+	G.P_CENTERS["j_joker"].config.pronouns = "pn_any_all"
 	-- yuri
-	G.P_CENTERS["j_blueprint"].config.pronouns = "she/her"
-	G.P_CENTERS["j_brainstorm"].config.pronouns = "she/her"
+	G.P_CENTERS["j_blueprint"].config.pronouns = "pn_she_her"
+	G.P_CENTERS["j_brainstorm"].config.pronouns = "pn_she_her"
 	-- yaoi
-	G.P_CENTERS["j_photograph"].config.pronouns = "he/him"
-	G.P_CENTERS["j_hanging_chad"].config.pronouns = "he/him"
+	G.P_CENTERS["j_photograph"].config.pronouns = "pn_he_him"
+	G.P_CENTERS["j_hanging_chad"].config.pronouns = "pn_he_him"
 
 	G.P_CENTERS["j_misprint"].config.pronouns = {
 		ref_table = setmetatable({}, {__index = function()
-			return misprint_pronouns[math.random(#misprint_pronouns)]
+			local base_pronoun_key = ({
+				"pn_he_him", "pn_she_her", "pn_they_them",
+				"pn_xe_xem", "pn_any_all", "pn_no_pronouns",
+				"pn_it_its", "pn_he_she_they",
+			})[math.random(3)]
+			local base_pronoun = localize(base_pronoun_key)
+			local chars = {}
+			for chr in base_pronoun:gmatch "." do chars[#chars + 1] = chr end
+			for i = 1, #chars do
+				local j = math.random(#chars - i) + i - 1
+				chars[i], chars[j] = chars[j], chars[i]
+			end
+			return table.concat(chars)
 		end}),
 		ref_value = "*",
 		color = {1, 0, 1, 1},
 	}
-	
-	G.P_CENTERS["j_invisible"].config.pronouns = "no pronouns"
-	G.P_CENTERS["j_baron"].config.pronouns = "he/him"
-	G.P_CENTERS["j_half"].config.pronouns = {text="any/", color=G.C.UI.TEXT_INACTIVE}
-	G.P_CENTERS["j_abstract"].config.pronouns = "any/all"
-	G.P_CENTERS["j_hiker"].config.pronouns = "he/him"
 
-	G.P_CENTERS["j_caino"].config.pronouns = "he/him"
-	G.P_CENTERS["j_triboulet"].config.pronouns = "he/him"
-	G.P_CENTERS["j_yorick"].config.pronouns = "was/were"
-	G.P_CENTERS["j_chicot"].config.pronouns = "he/him"
-	G.P_CENTERS["j_perkeo"].config.pronouns = "he/him"
+	G.P_CENTERS["j_invisible"].config.pronouns = "pn_no_pronouns"
+	G.P_CENTERS["j_baron"].config.pronouns = "pn_he_him"
+	G.P_CENTERS["j_half"].config.pronouns = {key="pn_any_", color=G.C.UI.TEXT_INACTIVE}
+	G.P_CENTERS["j_abstract"].config.pronouns = "pn_any_all"
+	G.P_CENTERS["j_hiker"].config.pronouns = "pn_he_him"
+
+	G.P_CENTERS["j_caino"].config.pronouns = "pn_he_him"
+	G.P_CENTERS["j_triboulet"].config.pronouns = "pn_he_him"
+	G.P_CENTERS["j_yorick"].config.pronouns = "pn_was_were"
+	G.P_CENTERS["j_chicot"].config.pronouns = "pn_he_him"
+	G.P_CENTERS["j_perkeo"].config.pronouns = "pn_he_him"
 	-- Streamer aliases, to be respectful for them
-	G.P_CENTERS["j_turtle_bean"].config.pronouns = "he/him"
-	G.P_CENTERS["j_vagabond"].config.pronouns = "he/him"
+	G.P_CENTERS["j_turtle_bean"].config.pronouns = "pn_he_him"
+	G.P_CENTERS["j_vagabond"].config.pronouns = "pn_he_him"
 end
 

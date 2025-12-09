@@ -10,6 +10,17 @@ sources = ["main.lua"]
 
 [[patches]]
 [patches.pattern]
+target = "main.lua"
+position = "before"
+pattern = "function love.run()"
+payload = '''
+_JOKERPRONOUNS_MOD_DIR = "{{lovely_hack:patch_dir}}"
+'''
+times = 1
+match_indent = true
+
+[[patches]]
+[patches.pattern]
 target = "functions/UI_definitions.lua"
 position = "after"
 pattern = "local badges = {}"
@@ -17,7 +28,7 @@ payload = '''
 local pronouns = JOKERPRONOUNS.get_pronouns(card)
 if pronouns then
 	badges[#badges + 1] = create_badge(
-		(pronouns.ref_table and pronouns.ref_table[pronouns.ref_value]) or pronouns.text,
+		(pronouns.ref_table and pronouns.ref_table[pronouns.ref_value]) or localize(pronouns.key),
 		pronouns.color, pronouns.text_color or G.C.WHITE, 1
 	)
 end
