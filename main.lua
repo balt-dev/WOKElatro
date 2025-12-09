@@ -99,13 +99,13 @@ function hash(str)
 		if i + 7 > #str then break end
 		bytebuf = bit.bor(
 			bit.tobit(str:byte(i)),
-			bit.lshift(0ULL + str:byte(i+1), 8),
-			bit.lshift(0ULL + str:byte(i+2), 16),
-			bit.lshift(0ULL + str:byte(i+3), 24),
-			bit.lshift(0ULL + str:byte(i+4), 32),
-			bit.lshift(0ULL + str:byte(i+5), 40),
-			bit.lshift(0ULL + str:byte(i+6), 48),
-			bit.lshift(0ULL + str:byte(i+7), 56)
+			bit.lshift(bit.tobit(str:byte(i+1)), 8),
+			bit.lshift(bit.tobit(str:byte(i+2)), 16),
+			bit.lshift(bit.tobit(str:byte(i+3)), 24),
+			bit.lshift(bit.tobit(str:byte(i+4)), 32),
+			bit.lshift(bit.tobit(str:byte(i+5)), 40),
+			bit.lshift(bit.tobit(str:byte(i+6)), 48),
+			bit.lshift(bit.tobit(str:byte(i+7)), 56)
 		)
 		a, b, c, d = b, c, d, g(bit.bxor(a, bytebuf))
 		i = i + 8
