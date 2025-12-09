@@ -147,7 +147,6 @@ function JOKERPRONOUNS.get_pronouns(card)
 			card.config.key or 
 			(card.config.tag and card.config.tag.key)
 		if not key then
-			print(card.config)
 			return
 		end
 		if key == "c_base" then return end
