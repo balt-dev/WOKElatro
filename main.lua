@@ -66,19 +66,19 @@ for i, value in ipairs(JOKERPRONOUNS.weighted_pronoun_table) do
 	end
 end
 
--- LuaJIT simple implementation of SeaHash.
+-- LuaJIT simple implementation of SeaHash, altered for 32-bit numbers. Might be not as good.
 
-local A = 0x16f11fe89b0d677cULL -- Starting seed of section 1
-local B = 0xb480a793d8e6c86cULL -- Starting seed of section 2
-local C = 0x6fe2e5aaf078ebc9ULL -- Starting seed of section 3
-local D = 0x14f994a4c5259381ULL -- Starting seed of section 4
-local P = 0x07ed0e9fa0d94a33ULL -- Multiplier for j(x)
+local A = 0x9b0d677c
+local B = 0xd8e6c86c
+local C = 0xf078ebc9
+local D = 0xc5259381
+local P = 0xa0d94a33
 
 local function h(x)
-	return bit.lshift(bit.lshift(x, 32ULL), bit.lshift(x, 60ULL))
+	return bit.lshift(bit.lshift(x, 16), bit.lshift(x, 28))
 end
 local function j(x)
-	return P * x
+	return bit.tobit(P * x)
 end
 local function g(x)
 	return j(h(j(x)))
@@ -88,27 +88,23 @@ local hash_cache = {}
 
 function hash(str)
 	if hash_cache[str] then return hash_cache[str] end
-	while ((#str) % 8) ~= 0 do
+	while ((#str) % 4) ~= 0 do
 		str = str .. "\0"
 	end
 	local LEN = #str
-	local bytebuf = 0ULL
+	local bytebuf = 0
 	local a, b, c, d = A, B, C, D
 	local i = 1
 	while true do
-		if i + 7 > #str then break end
+		if i + 3 > #str then break end
 		bytebuf = bit.bor(
-			bit.tobit(str:byte(i)),
-			bit.lshift(bit.tobit(str:byte(i+1)), 8),
-			bit.lshift(bit.tobit(str:byte(i+2)), 16),
-			bit.lshift(bit.tobit(str:byte(i+3)), 24),
-			bit.lshift(bit.tobit(str:byte(i+4)), 32),
-			bit.lshift(bit.tobit(str:byte(i+5)), 40),
-			bit.lshift(bit.tobit(str:byte(i+6)), 48),
-			bit.lshift(bit.tobit(str:byte(i+7)), 56)
+			str:byte(i),
+			bit.lshift(str:byte(i+1), 8),
+			bit.lshift(str:byte(i+2), 16),
+			bit.lshift(str:byte(i+3), 24)
 		)
 		a, b, c, d = b, c, d, g(bit.bxor(a, bytebuf))
-		i = i + 8
+		i = i + 4
 	end
 	local res = bit.bxor(
 		a, b, c, d, LEN
@@ -153,7 +149,7 @@ function JOKERPRONOUNS.get_pronouns(card)
 		if key:find("^m_") then return end
 		if key:find("^e_") then return end
 		local key_hash = hash(key)
-		local rand = tonumber(bit.rshift(key_hash, 32)) / 2^32
+		local rand = (tonumber(key_hash) / 2^32) + 0.5
 		return pick_random(rand)
 	end
 end
