@@ -99,13 +99,13 @@ function hash(str)
 		if i + 7 > #str then break end
 		bytebuf = bit.bor(
 			bit.tobit(str:byte(i)),
-			bit.lshift(bit.tobit(str:byte(i+1)), 8),
-			bit.lshift(bit.tobit(str:byte(i+2)), 16),
-			bit.lshift(bit.tobit(str:byte(i+3)), 24),
-			bit.lshift(bit.tobit(str:byte(i+4)), 32),
-			bit.lshift(bit.tobit(str:byte(i+5)), 40),
-			bit.lshift(bit.tobit(str:byte(i+6)), 48),
-			bit.lshift(bit.tobit(str:byte(i+7)), 56)
+			bit.lshift(0ULL + str:byte(i+1), 8),
+			bit.lshift(0ULL + str:byte(i+2), 16),
+			bit.lshift(0ULL + str:byte(i+3), 24),
+			bit.lshift(0ULL + str:byte(i+4), 32),
+			bit.lshift(0ULL + str:byte(i+5), 40),
+			bit.lshift(0ULL + str:byte(i+6), 48),
+			bit.lshift(0ULL + str:byte(i+7), 56)
 		)
 		a, b, c, d = b, c, d, g(bit.bxor(a, bytebuf))
 		i = i + 8
@@ -184,8 +184,13 @@ local misprint_pronouns = {
 function Game:start_up()
 	Game_start_up(self)
 	G.P_CENTERS["j_joker"].config.pronouns = "any/all"
+	-- yuri
+	G.P_CENTERS["j_blueprint"].config.pronouns = "she/her"
 	G.P_CENTERS["j_brainstorm"].config.pronouns = "she/her"
-	G.P_CENTERS["j_hanging_chad"].config.pronouns = "she/her"
+	-- yaoi
+	G.P_CENTERS["j_photograph"].config.pronouns = "he/him"
+	G.P_CENTERS["j_hanging_chad"].config.pronouns = "he/him"
+
 	G.P_CENTERS["j_misprint"].config.pronouns = {
 		ref_table = setmetatable({}, {__index = function()
 			return misprint_pronouns[math.random(#misprint_pronouns)]
@@ -193,6 +198,20 @@ function Game:start_up()
 		ref_value = "*",
 		color = {1, 0, 1, 1},
 	}
+	
 	G.P_CENTERS["j_invisible"].config.pronouns = "no pronouns"
+	G.P_CENTERS["j_baron"].config.pronouns = "he/him"
+	G.P_CENTERS["j_half"].config.pronouns = {text="any/", color=G.C.UI.TEXT_INACTIVE}
+	G.P_CENTERS["j_abstract"].config.pronouns = "any/all"
+	G.P_CENTERS["j_hiker"].config.pronouns = "he/him"
+
+	G.P_CENTERS["j_caino"].config.pronouns = "he/him"
+	G.P_CENTERS["j_triboulet"].config.pronouns = "he/him"
+	G.P_CENTERS["j_yorick"].config.pronouns = "was/were"
+	G.P_CENTERS["j_chicot"].config.pronouns = "he/him"
+	G.P_CENTERS["j_perkeo"].config.pronouns = "he/him"
+	-- Streamer aliases, to be respectful for them
+	G.P_CENTERS["j_turtle_bean"].config.pronouns = "he/him"
+	G.P_CENTERS["j_vagabond"].config.pronouns = "he/him"
 end
 
