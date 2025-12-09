@@ -173,7 +173,7 @@ function Game:start_up()
 				"pn_he_him", "pn_she_her", "pn_they_them",
 				"pn_xe_xem", "pn_any_all", "pn_no_pronouns",
 				"pn_it_its", "pn_he_she_they",
-			})[math.random(3)]
+			})[math.random(8)]
 			local base_pronoun = localize(base_pronoun_key)
 			local chars = {}
 			for chr in base_pronoun:gmatch "." do chars[#chars + 1] = chr end
