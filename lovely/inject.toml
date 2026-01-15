@@ -6,7 +6,7 @@ priority = -2147483648
 [patches.copy]
 target = "main.lua"
 position = "append"
-sources = ["main.lua"]
+sources = ["inject.lua"]
 
 [[patches]]
 [patches.pattern]
